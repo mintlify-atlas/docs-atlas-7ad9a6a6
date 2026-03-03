@@ -1,0 +1,207 @@
+---
+title: Shared UI components
+description: Reusable UI components used throughout the application
+---
+
+## Button
+
+A styled button component that extends the native HTML button element with consistent styling and hover effects.
+
+<ParamField path="children" type="React.ReactNode" required>
+  The content to display inside the button
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes to apply to the button
+</ParamField>
+
+<ParamField path="...rest" type="React.ButtonHTMLAttributes<HTMLButtonElement>">
+  All standard HTML button attributes (type, onClick, disabled, etc.)
+</ParamField>
+
+### Usage
+
+```tsx
+import { Button } from '@/app/ui/button';
+
+export default function MyForm() {
+  return (
+    <form>
+      <Button type="submit">Create Invoice</Button>
+      <Button type="button" onClick={() => console.log('clicked')}>
+        Cancel
+      </Button>
+    </form>
+  );
+}
+```
+
+### Styling
+
+The button includes:
+- Blue background with hover and active states
+- Focus-visible outline for accessibility
+- Disabled state with reduced opacity and cursor changes
+- Consistent height and padding
+- Smooth transitions
+
+## Search
+
+A client-side search input component with an icon that can be used for filtering content.
+
+<ParamField path="placeholder" type="string" required>
+  Placeholder text displayed in the search input
+</ParamField>
+
+### Usage
+
+```tsx
+import Search from '@/app/ui/search';
+
+export default function InvoicesPage() {
+  return (
+    <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
+      <Search placeholder="Search invoices..." />
+    </div>
+  );
+}
+```
+
+### Features
+
+- **Icon integration**: Includes a magnifying glass icon from Heroicons
+- **Accessibility**: Includes a screen reader-only label
+- **Focus states**: Icon color changes on input focus
+- **Responsive**: Flexible width that adapts to container
+
+## AcmeLogo
+
+Displays the Acme company logo with a globe icon and text. Uses the Lusitana font for brand consistency.
+
+### Usage
+
+```tsx
+import AcmeLogo from '@/app/ui/acme-logo';
+import Link from 'next/link';
+
+export default function Header() {
+  return (
+    <Link
+      className="mb-2 flex h-20 items-end justify-start rounded-md bg-blue-600 p-4"
+      href="/"
+    >
+      <div className="w-32 text-white">
+        <AcmeLogo />
+      </div>
+    </Link>
+  );
+}
+```
+
+## Skeleton components
+
+Loading skeleton components that display placeholder content while data is being fetched. All skeletons include a shimmer animation effect.
+
+### CardSkeleton
+
+Skeleton for metric cards.
+
+```tsx
+import { CardSkeleton } from '@/app/ui/skeletons';
+
+export default function Loading() {
+  return <CardSkeleton />;
+}
+```
+
+### CardsSkeleton
+
+Displays four card skeletons in a grid layout.
+
+```tsx
+import { CardsSkeleton } from '@/app/ui/skeletons';
+
+export default function Loading() {
+  return (
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <CardsSkeleton />
+    </div>
+  );
+}
+```
+
+### RevenueChartSkeleton
+
+Skeleton for the revenue chart component.
+
+```tsx
+import { RevenueChartSkeleton } from '@/app/ui/skeletons';
+
+export default function Loading() {
+  return <RevenueChartSkeleton />;
+}
+```
+
+### LatestInvoicesSkeleton
+
+Skeleton for the latest invoices list.
+
+```tsx
+import { LatestInvoicesSkeleton } from '@/app/ui/skeletons';
+
+export default function Loading() {
+  return <LatestInvoicesSkeleton />;
+}
+```
+
+### InvoicesTableSkeleton
+
+Skeleton for the full invoices table with both mobile and desktop layouts.
+
+```tsx
+import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
+
+export default function Loading() {
+  return <InvoicesTableSkeleton />;
+}
+```
+
+### DashboardSkeleton
+
+Complete dashboard skeleton including cards, revenue chart, and latest invoices.
+
+```tsx
+import DashboardSkeleton from '@/app/ui/skeletons';
+
+export default function Loading() {
+  return <DashboardSkeleton />;
+}
+```
+
+### TableRowSkeleton
+
+Skeleton for a single table row. Used internally by other skeleton components.
+
+### InvoicesMobileSkeleton
+
+Skeleton for mobile invoice cards. Used internally by InvoicesTableSkeleton.
+
+### Usage with Suspense
+
+Skeletons work seamlessly with React Suspense for streaming server-side rendering:
+
+```tsx
+import { Suspense } from 'react';
+import { CardsSkeleton } from '@/app/ui/skeletons';
+import CardWrapper from '@/app/ui/dashboard/cards';
+
+export default function Dashboard() {
+  return (
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <Suspense fallback={<CardsSkeleton />}>
+        <CardWrapper />
+      </Suspense>
+    </div>
+  );
+}
+```

@@ -1,0 +1,120 @@
+---
+title: Customer management
+description: View and search customer information with invoice totals and payment status
+---
+
+The customer management feature provides a comprehensive view of all your customers, their contact information, and their invoice history. You can search for specific customers and track their payment activity at a glance.
+
+## Viewing customers
+
+The customers page displays all customers in your nexDash account in a searchable table format.
+
+<Note>
+  Customer data includes profile images, contact details, and aggregated invoice metrics for quick financial insights.
+</Note>
+
+### Customer information displayed
+
+Each customer entry shows:
+
+- **Name and profile image** - Visual identification of the customer
+- **Email address** - Primary contact information
+- **Total invoices** - Count of all invoices associated with this customer
+- **Total pending** - Sum of all unpaid invoices in USD
+- **Total paid** - Sum of all completed payments in USD
+
+### Data structure
+
+Customer records follow this structure:
+
+```typescript
+type CustomersTableType = {
+  id: string;
+  name: string;
+  email: string;
+  image_url: string;
+  total_invoices: number;
+  total_pending: number;
+  total_paid: number;
+}
+```
+
+## Searching customers
+
+Use the search bar at the top of the customers page to filter your customer list.
+
+<Steps>
+  <Step title="Enter search term">
+    Type a customer name or email address in the search field
+  </Step>
+  <Step title="View filtered results">
+    The table automatically updates to show matching customers
+  </Step>
+  <Step title="Clear search">
+    Remove your search term to display all customers again
+  </Step>
+</Steps>
+
+### What you can search
+
+The search functionality filters customers by:
+
+- Customer name (case-insensitive)
+- Email address (case-insensitive)
+
+<Tip>
+  Use partial matches to find customers quickly. For example, searching "john" will find "John Smith" and "johnny@example.com"
+</Tip>
+
+## Customer table views
+
+nexDash adapts the customer display based on your screen size:
+
+<Tabs>
+  <Tab title="Desktop view">
+    On larger screens, customers appear in a full table with columns for:
+    - Name (with profile image)
+    - Email
+    - Total Invoices
+    - Total Pending
+    - Total Paid
+
+    This view makes it easy to scan across multiple customers and compare metrics.
+  </Tab>
+  <Tab title="Mobile view">
+    On mobile devices, each customer appears as a card showing:
+    - Profile image and name at the top
+    - Email address below the name
+    - Pending and paid amounts in a two-column layout
+    - Total invoice count at the bottom
+
+    Cards are stacked vertically for easy scrolling on smaller screens.
+  </Tab>
+</Tabs>
+
+## Understanding customer metrics
+
+<AccordionGroup>
+  <Accordion title="How are invoice totals calculated?">
+    The total invoices count includes all invoices linked to a customer, regardless of payment status. This gives you a complete picture of your business relationship.
+  </Accordion>
+  
+  <Accordion title="What does 'total pending' mean?">
+    Total pending represents the sum of all invoices with a `pending` status for this customer. These are invoices that have been created but not yet marked as paid.
+  </Accordion>
+  
+  <Accordion title="What does 'total paid' include?">
+    Total paid is the sum of all invoices marked with a `paid` status. This shows how much revenue you've successfully collected from this customer.
+  </Accordion>
+</AccordionGroup>
+
+## Related features
+
+<CardGroup cols={2}>
+  <Card title="Invoice tracking" icon="file-invoice" href="/features/invoices">
+    Create and manage invoices for your customers
+  </Card>
+  <Card title="Revenue visualization" icon="chart-line" href="/features/revenue">
+    View revenue trends across all customers
+  </Card>
+</CardGroup>

@@ -1,0 +1,224 @@
+---
+title: Invoice tracking
+description: Create, edit, and manage customer invoices with status tracking and search capabilities
+---
+
+The invoice tracking system lets you manage all aspects of customer billing, from creation to payment tracking. Search through invoices, update their status, and maintain a complete record of your business transactions.
+
+## Invoice overview
+
+Invoices are the core financial records in nexDash, linking customers to payment amounts and tracking their payment status.
+
+### Invoice data structure
+
+```typescript
+type Invoice = {
+  id: string;
+  customer_id: string;
+  amount: number;
+  date: string;
+  status: 'pending' | 'paid';
+}
+
+type InvoicesTable = {
+  id: string;
+  customer_id: string;
+  name: string;
+  email: string;
+  image_url: string;
+  date: string;
+  amount: number;
+  status: 'pending' | 'paid';
+}
+```
+
+<Note>
+  The `InvoicesTable` type includes customer information joined from the customers table for display purposes.
+</Note>
+
+## Viewing invoices
+
+The invoices page displays all invoices with customer details in an organized, searchable table.
+
+### Information displayed
+
+Each invoice shows:
+
+- **Customer** - Name and profile image
+- **Email** - Customer contact information  
+- **Amount** - Invoice total in USD (formatted as currency)
+- **Date** - When the invoice was created
+- **Status** - Visual badge showing "Pending" or "Paid"
+- **Actions** - Edit and delete buttons
+
+<Tabs>
+  <Tab title="Desktop layout">
+    Invoices appear in a table with all fields visible in columns. Action buttons (Edit/Delete) are aligned to the right of each row.
+  </Tab>
+  <Tab title="Mobile layout">
+    Each invoice displays as a card with:
+    - Customer info and status badge at the top
+    - Amount prominently displayed
+    - Date below the amount
+    - Edit and delete buttons at the bottom right
+  </Tab>
+</Tabs>
+
+## Creating invoices
+
+Create new invoices for your customers in three simple steps.
+
+<Steps>
+  <Step title="Choose customer">
+    Select the customer from the dropdown menu. The list shows all customers sorted alphabetically by name.
+  </Step>
+  <Step title="Enter amount">
+    Input the invoice amount in USD. You can enter decimal values for cents (e.g., 150.50).
+  </Step>
+  <Step title="Set status">
+    Choose the initial status:
+    - **Pending** - Invoice has been sent but not yet paid
+    - **Paid** - Payment has been received
+  </Step>
+</Steps>
+
+### Create form fields
+
+The invoice creation form includes:
+
+```typescript
+interface CreateInvoiceForm {
+  customerId: string;  // Selected from dropdown
+  amount: number;      // USD amount with decimals
+  status: 'pending' | 'paid';  // Radio button selection
+}
+```
+
+<Warning>
+  Make sure to select a customer before submitting. The form requires all fields to be filled.
+</Warning>
+
+## Editing invoices
+
+Update existing invoices to change the customer, amount, or payment status.
+
+### How to edit an invoice
+
+1. Click the **Edit** button (pencil icon) next to any invoice in the table
+2. The edit form opens with current values pre-filled
+3. Modify any field:
+   - Change the customer assignment
+   - Update the invoice amount
+   - Mark as paid or pending
+4. Click **Edit Invoice** to save changes
+5. Click **Cancel** to discard changes and return to the invoice list
+
+<Tip>
+  Use the edit feature to mark invoices as paid once you receive payment from customers.
+</Tip>
+
+## Deleting invoices
+
+Remove invoices that were created in error or are no longer needed.
+
+<Warning>
+  Deleting an invoice is permanent and will affect customer totals. Make sure you want to remove the invoice before confirming deletion.
+</Warning>
+
+To delete an invoice:
+1. Click the **Delete** button (trash icon) next to the invoice
+2. Confirm the deletion when prompted
+
+## Searching invoices
+
+Quickly find specific invoices using the search functionality.
+
+### Search capabilities
+
+The invoice search filters by:
+
+- **Customer name** - Find all invoices for a specific customer
+- **Email address** - Search by customer email
+- **Amount** - Locate invoices by dollar amount
+- **Date** - Search by invoice date
+- **Status** - Filter by "pending" or "paid"
+
+<Note>
+  Search is case-insensitive and supports partial matches. Results update automatically as you type.
+</Note>
+
+## Invoice pagination
+
+Invoices are displayed 6 per page to keep the interface clean and performant.
+
+### Navigating pages
+
+- Use the pagination controls at the bottom of the invoice table
+- Page numbers update based on your search filters
+- The system calculates total pages dynamically
+
+```typescript
+const ITEMS_PER_PAGE = 6;
+```
+
+## Invoice status indicators
+
+Status badges provide visual clarity on payment state:
+
+<Tabs>
+  <Tab title="Pending">
+    - Gray background
+    - Clock icon
+    - Indicates payment not yet received
+    - Contributes to customer's "total pending" amount
+  </Tab>
+  <Tab title="Paid">
+    - Green background  
+    - Checkmark icon
+    - Indicates payment completed
+    - Contributes to customer's "total paid" amount
+  </Tab>
+</Tabs>
+
+## Latest invoices
+
+Your dashboard displays the 5 most recent invoices for quick access.
+
+```typescript
+type LatestInvoice = {
+  id: string;
+  name: string;
+  image_url: string;
+  email: string;
+  amount: string;  // Formatted as currency
+}
+```
+
+Latest invoices are sorted by date in descending order, showing your most recent billing activity.
+
+## Understanding invoice amounts
+
+<AccordionGroup>
+  <Accordion title="How are amounts stored?">
+    Invoice amounts are stored as numbers representing cents. For example, $150.50 is stored as 15050. The system handles conversion for display and editing.
+  </Accordion>
+  
+  <Accordion title="What currency is supported?">
+    nexDash currently displays all amounts in USD with proper currency formatting ($).
+  </Accordion>
+  
+  <Accordion title="Can I edit an invoice after it's paid?">
+    Yes, you can edit any invoice field including changing a paid invoice back to pending if needed. However, this will affect customer payment totals.
+  </Accordion>
+</AccordionGroup>
+
+## Related features
+
+<CardGroup cols={2}>
+  <Card title="Customer management" icon="users" href="/features/customers">
+    View customer details and payment history
+  </Card>
+  <Card title="Revenue visualization" icon="chart-bar" href="/features/revenue">
+    See revenue trends from all invoices
+  </Card>
+</CardGroup>

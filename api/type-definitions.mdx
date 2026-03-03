@@ -1,0 +1,354 @@
+---
+title: Type definitions
+description: TypeScript type definitions that describe the shape of data used throughout the nexDash application.
+---
+
+This module contains TypeScript type definitions for all data models in the application. These types ensure type safety when working with database records, API responses, and form data.
+
+## User
+
+Represents a user account in the system.
+
+```typescript
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+};
+```
+
+<ResponseField name="id" type="string">
+  Unique identifier for the user.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Display name of the user.
+</ResponseField>
+
+<ResponseField name="email" type="string">
+  Email address of the user (used for authentication).
+</ResponseField>
+
+<ResponseField name="password" type="string">
+  Hashed password for the user account.
+</ResponseField>
+
+---
+
+## Customer
+
+Represents a customer entity with basic contact information.
+
+```typescript
+export type Customer = {
+  id: string;
+  name: string;
+  email: string;
+  image_url: string;
+};
+```
+
+<ResponseField name="id" type="string">
+  Unique identifier for the customer.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Full name of the customer.
+</ResponseField>
+
+<ResponseField name="email" type="string">
+  Email address of the customer.
+</ResponseField>
+
+<ResponseField name="image_url" type="string">
+  URL or path to the customer's profile image.
+</ResponseField>
+
+---
+
+## Invoice
+
+Represents an invoice record with core fields.
+
+```typescript
+export type Invoice = {
+  id: string;
+  customer_id: string;
+  amount: number;
+  date: string;
+  status: 'pending' | 'paid';
+};
+```
+
+<ResponseField name="id" type="string">
+  Unique identifier for the invoice.
+</ResponseField>
+
+<ResponseField name="customer_id" type="string">
+  Foreign key reference to the customer who owns this invoice.
+</ResponseField>
+
+<ResponseField name="amount" type="number">
+  Invoice amount in cents.
+</ResponseField>
+
+<ResponseField name="date" type="string">
+  ISO date string representing when the invoice was created.
+</ResponseField>
+
+<ResponseField name="status" type="'pending' | 'paid'">
+  Current payment status of the invoice. This is a string union type that can only be 'pending' or 'paid'.
+</ResponseField>
+
+---
+
+## Revenue
+
+Represents monthly revenue data for charts and analytics.
+
+```typescript
+export type Revenue = {
+  month: string;
+  revenue: number;
+};
+```
+
+<ResponseField name="month" type="string">
+  Month identifier (e.g., 'Jan', 'Feb', 'Mar').
+</ResponseField>
+
+<ResponseField name="revenue" type="number">
+  Revenue amount for the month.
+</ResponseField>
+
+---
+
+## LatestInvoice
+
+Represents a recent invoice with customer details and formatted amount.
+
+```typescript
+export type LatestInvoice = {
+  id: string;
+  name: string;
+  image_url: string;
+  email: string;
+  amount: string;
+};
+```
+
+<ResponseField name="id" type="string">
+  Unique identifier for the invoice.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Name of the customer associated with this invoice.
+</ResponseField>
+
+<ResponseField name="image_url" type="string">
+  URL to the customer's profile image.
+</ResponseField>
+
+<ResponseField name="email" type="string">
+  Email address of the customer.
+</ResponseField>
+
+<ResponseField name="amount" type="string">
+  Formatted currency string (e.g., '$1,234.56').
+</ResponseField>
+
+---
+
+## LatestInvoiceRaw
+
+Represents a recent invoice as returned from the database before formatting.
+
+```typescript
+export type LatestInvoiceRaw = Omit<LatestInvoice, 'amount'> & {
+  amount: number;
+};
+```
+
+This type extends `LatestInvoice` but with the amount field as a number instead of a formatted string. The database returns a number for amount, which is later formatted to a string using the `formatCurrency()` function.
+
+<ResponseField name="amount" type="number">
+  Numeric invoice amount in cents (before formatting).
+</ResponseField>
+
+---
+
+## InvoicesTable
+
+Represents invoice data with joined customer information for table display.
+
+```typescript
+export type InvoicesTable = {
+  id: string;
+  customer_id: string;
+  name: string;
+  email: string;
+  image_url: string;
+  date: string;
+  amount: number;
+  status: 'pending' | 'paid';
+};
+```
+
+<ResponseField name="id" type="string">
+  Unique identifier for the invoice.
+</ResponseField>
+
+<ResponseField name="customer_id" type="string">
+  Foreign key reference to the customer.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Customer name (joined from customers table).
+</ResponseField>
+
+<ResponseField name="email" type="string">
+  Customer email (joined from customers table).
+</ResponseField>
+
+<ResponseField name="image_url" type="string">
+  Customer profile image URL (joined from customers table).
+</ResponseField>
+
+<ResponseField name="date" type="string">
+  Invoice creation date.
+</ResponseField>
+
+<ResponseField name="amount" type="number">
+  Invoice amount in cents.
+</ResponseField>
+
+<ResponseField name="status" type="'pending' | 'paid'">
+  Payment status of the invoice.
+</ResponseField>
+
+---
+
+## CustomersTableType
+
+Represents customer data with aggregated invoice totals (raw numeric values).
+
+```typescript
+export type CustomersTableType = {
+  id: string;
+  name: string;
+  email: string;
+  image_url: string;
+  total_invoices: number;
+  total_pending: number;
+  total_paid: number;
+};
+```
+
+<ResponseField name="id" type="string">
+  Unique identifier for the customer.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Customer's full name.
+</ResponseField>
+
+<ResponseField name="email" type="string">
+  Customer's email address.
+</ResponseField>
+
+<ResponseField name="image_url" type="string">
+  URL to the customer's profile image.
+</ResponseField>
+
+<ResponseField name="total_invoices" type="number">
+  Total count of invoices for this customer.
+</ResponseField>
+
+<ResponseField name="total_pending" type="number">
+  Total amount of pending invoices in cents.
+</ResponseField>
+
+<ResponseField name="total_paid" type="number">
+  Total amount of paid invoices in cents.
+</ResponseField>
+
+---
+
+## FormattedCustomersTable
+
+Represents customer data with aggregated invoice totals (formatted currency strings).
+
+```typescript
+export type FormattedCustomersTable = {
+  id: string;
+  name: string;
+  email: string;
+  image_url: string;
+  total_invoices: number;
+  total_pending: string;
+  total_paid: string;
+};
+```
+
+This type is similar to `CustomersTableType` but with formatted currency strings for pending and paid amounts.
+
+<ResponseField name="total_pending" type="string">
+  Formatted currency string of total pending invoices (e.g., '$1,234.56').
+</ResponseField>
+
+<ResponseField name="total_paid" type="string">
+  Formatted currency string of total paid invoices (e.g., '$5,678.90').
+</ResponseField>
+
+---
+
+## CustomerField
+
+Represents minimal customer data for form select/dropdown fields.
+
+```typescript
+export type CustomerField = {
+  id: string;
+  name: string;
+};
+```
+
+<ResponseField name="id" type="string">
+  Unique identifier for the customer.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Customer's name for display in select options.
+</ResponseField>
+
+---
+
+## InvoiceForm
+
+Represents invoice data structure for form editing.
+
+```typescript
+export type InvoiceForm = {
+  id: string;
+  customer_id: string;
+  amount: number;
+  status: 'pending' | 'paid';
+};
+```
+
+<ResponseField name="id" type="string">
+  Unique identifier for the invoice.
+</ResponseField>
+
+<ResponseField name="customer_id" type="string">
+  Selected customer ID for the invoice.
+</ResponseField>
+
+<ResponseField name="amount" type="number">
+  Invoice amount in dollars (converted from cents).
+</ResponseField>
+
+<ResponseField name="status" type="'pending' | 'paid'">
+  Selected payment status.
+</ResponseField>

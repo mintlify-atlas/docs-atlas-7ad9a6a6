@@ -1,80 +1,237 @@
 ---
 title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+description: "Get nexDash running locally in under 5 minutes"
 ---
 
-## Get started in three steps
+Get your nexDash dashboard up and running quickly with this step-by-step guide.
 
-Get your documentation site running locally and make your first customization.
+## Prerequisites
 
-### Step 1: Set up your local environment
+Before you begin, ensure you have:
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+- Node.js 18.17.0 or higher
+- npm, yarn, or pnpm package manager
+- A Vercel Postgres database (or any PostgreSQL database)
+- Git installed on your machine
 
-### Step 2: Deploy your changes
+## Get started
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+<Steps>
+  <Step title="Clone the repository">
+    Clone the nexDash repository to your local machine:
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+    <CodeGroup>
+    ```bash HTTPS
+    git clone https://github.com/Harshit-Khattar/nexDash.git
+    cd nexDash
+    ```
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+    ```bash SSH
+    git clone git@github.com:Harshit-Khattar/nexDash.git
+    cd nexDash
+    ```
 
-### Step 3: Go live
+    ```bash GitHub CLI
+    gh repo clone Harshit-Khattar/nexDash
+    cd nexDash
+    ```
+    </CodeGroup>
+  </Step>
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+  <Step title="Install dependencies">
+    Install all required dependencies:
+
+    <CodeGroup>
+    ```bash npm
+    npm install
+    ```
+
+    ```bash yarn
+    yarn install
+    ```
+
+    ```bash pnpm
+    pnpm install
+    ```
+    </CodeGroup>
+
+    This will install:
+    - Next.js 14 and React 18
+    - TypeScript and type definitions
+    - Tailwind CSS for styling
+    - Vercel Postgres SDK
+    - bcrypt for password hashing
+    - Additional UI dependencies
+  </Step>
+
+  <Step title="Set up environment variables">
+    Create a `.env.local` file in the root directory:
+
+    ```bash
+    cp .env.example .env.local
+    ```
+
+    Update the file with your database credentials:
+
+    ```bash
+    POSTGRES_URL="postgresql://..."
+    POSTGRES_PRISMA_URL="postgresql://..."
+    POSTGRES_URL_NON_POOLING="postgresql://..."
+    POSTGRES_USER="your_user"
+    POSTGRES_HOST="your_host"
+    POSTGRES_PASSWORD="your_password"
+    POSTGRES_DATABASE="your_database"
+
+    AUTH_SECRET="your_secret_here"
+    AUTH_URL="http://localhost:3000/api/auth"
+    ```
+
+    <Tip>
+    Generate a secure `AUTH_SECRET` using: `openssl rand -base64 32`
+    </Tip>
+
+    See [environment variables](/development/environment-variables) for detailed configuration.
+  </Step>
+
+  <Step title="Seed the database">
+    Populate your database with sample data:
+
+    ```bash
+    npm run seed
+    ```
+
+    This creates and populates four tables:
+    - **users** - 1 demo user
+    - **customers** - 10 sample customers
+    - **invoices** - 15 sample invoices
+    - **revenue** - 12 months of revenue data
+
+    <Note>
+    The demo credentials are:
+    - Email: `user@nextmail.com`
+    - Password: `123456`
+    </Note>
+
+    See [database setup](/development/database-setup) for more details.
+  </Step>
+
+  <Step title="Start the development server">
+    Run the development server:
+
+    <CodeGroup>
+    ```bash npm
+    npm run dev
+    ```
+
+    ```bash yarn
+    yarn dev
+    ```
+
+    ```bash pnpm
+    pnpm dev
+    ```
+    </CodeGroup>
+
+    The application will start at `http://localhost:3000`.
+  </Step>
+
+  <Step title="Log in to the dashboard">
+    1. Open your browser to `http://localhost:3000`
+    2. Click **Log in** on the landing page
+    3. Enter the demo credentials:
+       - Email: `user@nextmail.com`
+       - Password: `123456`
+    4. You'll be redirected to the dashboard
+
+    You can now explore:
+    - Customer management
+    - Invoice tracking
+    - Revenue charts
+    - Dashboard analytics
+  </Step>
+
+  <Step title="Explore the features">
+    Navigate through the dashboard:
+
+    <CardGroup cols={2}>
+      <Card title="Customers" icon="users" href="/features/customers">
+        View and manage customer profiles
+      </Card>
+      <Card title="Invoices" icon="file-invoice" href="/features/invoices">
+        Track and update invoice status
+      </Card>
+      <Card title="Revenue" icon="chart-line" href="/features/revenue">
+        Visualize revenue analytics
+      </Card>
+      <Card title="API Reference" icon="code" href="/api/data-functions">
+        Explore the data layer API
+      </Card>
+    </CardGroup>
+  </Step>
+</Steps>
+
+## Available scripts
+
+Once installed, you can use these npm scripts:
+
+| Script | Command | Description |
+|--------|---------|-------------|
+| Development | `npm run dev` | Start development server on port 3000 |
+| Build | `npm run build` | Create production build |
+| Start | `npm run start` | Run production server |
+| Format | `npm run prettier` | Format code with Prettier |
+| Format check | `npm run prettier:check` | Check code formatting |
 
 ## Next steps
 
-Now that you have your docs running, explore these key features:
-
 <CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
+  <Card title="Configure database" icon="database" href="/development/database-setup">
+    Learn about the database schema and seeding
+  </Card>
+  <Card title="Deploy to production" icon="rocket" href="/development/deployment">
+    Deploy your dashboard to Vercel
+  </Card>
+  <Card title="Customize features" icon="palette" href="/features/customers">
+    Explore and customize core features
+  </Card>
+  <Card title="API documentation" icon="book" href="/api/data-functions">
+    Browse the complete API reference
+  </Card>
 </CardGroup>
 
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Database connection failed">
+    Ensure your `.env.local` file has correct database credentials. Check that:
+    - The database URL is properly formatted
+    - Your database server is running
+    - Network access is allowed to the database host
+  </Accordion>
+
+  <Accordion title="Seed script errors">
+    If seeding fails:
+    - Verify database connection first
+    - Check that tables don't already exist (drop them if needed)
+    - Ensure the database user has CREATE TABLE permissions
+  </Accordion>
+
+  <Accordion title="Port 3000 already in use">
+    Either:
+    - Stop the process using port 3000
+    - Or use a different port: `PORT=3001 npm run dev`
+  </Accordion>
+
+  <Accordion title="Authentication not working">
+    Make sure:
+    - `AUTH_SECRET` is set in `.env.local`
+    - The users table has been seeded
+    - You're using the correct demo credentials
+  </Accordion>
+</AccordionGroup>
+
+## Get help
+
+<Card title="View on GitHub" icon="github" href="https://github.com/Harshit-Khattar/nexDash">
+  Report issues or contribute to the project
+</Card>

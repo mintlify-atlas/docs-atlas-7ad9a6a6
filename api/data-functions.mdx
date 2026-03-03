@@ -1,0 +1,352 @@
+---
+title: Data functions
+description: Server-side data fetching functions for retrieving revenue, invoices, customers, and user data from the database.
+---
+
+This module provides asynchronous functions for fetching data from the PostgreSQL database using Vercel's SQL client. All functions handle errors gracefully and throw descriptive error messages.
+
+## fetchRevenue
+
+Fetches all revenue data from the database.
+
+```typescript
+export async function fetchRevenue(): Promise<Revenue[]>
+```
+
+<ResponseField name="return" type="Promise<Revenue[]>">
+  Array of revenue records containing monthly revenue data.
+</ResponseField>
+
+### Example
+
+```typescript
+import { fetchRevenue } from '@/app/lib/data';
+
+const revenueData = await fetchRevenue();
+// Returns: [{ month: 'Jan', revenue: 2000 }, ...]
+```
+
+### Error handling
+
+Throws an error with message "Failed to fetch revenue data." if the database query fails.
+
+---
+
+## fetchLatestInvoices
+
+Fetches the 5 most recent invoices with customer information and formatted amounts.
+
+```typescript
+export async function fetchLatestInvoices(): Promise<LatestInvoice[]>
+```
+
+<ResponseField name="return" type="Promise<LatestInvoice[]>">
+  Array of the 5 latest invoices with formatted currency amounts.
+</ResponseField>
+
+### Example
+
+```typescript
+import { fetchLatestInvoices } from '@/app/lib/data';
+
+const invoices = await fetchLatestInvoices();
+// Returns: [{ id: '...', name: 'Customer Name', email: '...', image_url: '...', amount: '$1,000.00' }]
+```
+
+### Implementation details
+
+- Queries invoices joined with customer data
+- Orders by date descending
+- Limits results to 5 records
+- Formats amounts using `formatCurrency()` utility
+
+### Error handling
+
+Throws an error with message "Failed to fetch the latest invoices." if the database query fails.
+
+---
+
+## fetchCardData
+
+Fetches aggregated data for dashboard cards including invoice and customer counts, and total amounts for paid and pending invoices.
+
+```typescript
+export async function fetchCardData(): Promise<{
+  numberOfCustomers: number;
+  numberOfInvoices: number;
+  totalPaidInvoices: string;
+  totalPendingInvoices: string;
+}>
+```
+
+<ResponseField name="return" type="object">
+  Object containing aggregated dashboard statistics.
+  
+  <ResponseField name="numberOfCustomers" type="number">
+    Total count of customers in the database.
+  </ResponseField>
+  
+  <ResponseField name="numberOfInvoices" type="number">
+    Total count of invoices in the database.
+  </ResponseField>
+  
+  <ResponseField name="totalPaidInvoices" type="string">
+    Formatted currency string of total paid invoice amounts.
+  </ResponseField>
+  
+  <ResponseField name="totalPendingInvoices" type="string">
+    Formatted currency string of total pending invoice amounts.
+  </ResponseField>
+</ResponseField>
+
+### Example
+
+```typescript
+import { fetchCardData } from '@/app/lib/data';
+
+const cardData = await fetchCardData();
+// Returns: {
+//   numberOfCustomers: 50,
+//   numberOfInvoices: 200,
+//   totalPaidInvoices: '$15,000.00',
+//   totalPendingInvoices: '$3,500.00'
+// }
+```
+
+### Implementation details
+
+- Executes three SQL queries in parallel using `Promise.all()`
+- Queries invoice count, customer count, and invoice status sums
+- Formats currency amounts using `formatCurrency()` utility
+
+### Error handling
+
+Throws an error with message "Failed to fetch card data." if any database query fails.
+
+---
+
+## fetchFilteredInvoices
+
+Fetches a paginated list of invoices filtered by search query.
+
+```typescript
+export async function fetchFilteredInvoices(
+  query: string,
+  currentPage: number
+): Promise<InvoicesTable[]>
+```
+
+<ParamField path="query" type="string" required>
+  Search query to filter invoices by customer name, email, amount, date, or status.
+</ParamField>
+
+<ParamField path="currentPage" type="number" required>
+  Current page number for pagination (1-indexed).
+</ParamField>
+
+<ResponseField name="return" type="Promise<InvoicesTable[]>">
+  Array of filtered invoice records with customer information (6 items per page).
+</ResponseField>
+
+### Example
+
+```typescript
+import { fetchFilteredInvoices } from '@/app/lib/data';
+
+const invoices = await fetchFilteredInvoices('pending', 1);
+// Returns invoices matching 'pending' on page 1
+```
+
+### Implementation details
+
+- Uses case-insensitive search (ILIKE) across multiple fields
+- Paginates results with 6 items per page
+- Joins invoice data with customer information
+- Orders by invoice date descending
+
+### Error handling
+
+Throws an error with message "Failed to fetch invoices." if the database query fails.
+
+---
+
+## fetchInvoicesPages
+
+Calculates the total number of pages for filtered invoices.
+
+```typescript
+export async function fetchInvoicesPages(query: string): Promise<number>
+```
+
+<ParamField path="query" type="string" required>
+  Search query to filter invoices by customer name, email, amount, date, or status.
+</ParamField>
+
+<ResponseField name="return" type="Promise<number>">
+  Total number of pages based on filtered invoice count (6 items per page).
+</ResponseField>
+
+### Example
+
+```typescript
+import { fetchInvoicesPages } from '@/app/lib/data';
+
+const totalPages = await fetchInvoicesPages('pending');
+// Returns: 5 (if there are 30 pending invoices)
+```
+
+### Implementation details
+
+- Uses the same filter logic as `fetchFilteredInvoices()`
+- Divides total count by 6 (ITEMS_PER_PAGE) and rounds up
+
+### Error handling
+
+Throws an error with message "Failed to fetch total number of invoices." if the database query fails.
+
+---
+
+## fetchInvoiceById
+
+Fetches a single invoice by ID for editing purposes.
+
+```typescript
+export async function fetchInvoiceById(id: string): Promise<InvoiceForm>
+```
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the invoice to fetch.
+</ParamField>
+
+<ResponseField name="return" type="Promise<InvoiceForm>">
+  Invoice form data with amount converted from cents to dollars.
+</ResponseField>
+
+### Example
+
+```typescript
+import { fetchInvoiceById } from '@/app/lib/data';
+
+const invoice = await fetchInvoiceById('abc123');
+// Returns: { id: 'abc123', customer_id: 'xyz', amount: 10.50, status: 'pending' }
+```
+
+### Implementation details
+
+- Queries invoice by ID
+- Converts amount from cents to dollars by dividing by 100
+- Returns the first matching record
+
+### Error handling
+
+Throws an error with message "Failed to fetch invoice." if the database query fails.
+
+---
+
+## fetchCustomers
+
+Fetches all customers ordered by name for dropdown/select fields.
+
+```typescript
+export async function fetchCustomers(): Promise<CustomerField[]>
+```
+
+<ResponseField name="return" type="Promise<CustomerField[]>">
+  Array of customer records containing only ID and name fields, sorted alphabetically.
+</ResponseField>
+
+### Example
+
+```typescript
+import { fetchCustomers } from '@/app/lib/data';
+
+const customers = await fetchCustomers();
+// Returns: [{ id: '1', name: 'Alice Johnson' }, { id: '2', name: 'Bob Smith' }, ...]
+```
+
+### Implementation details
+
+- Selects only `id` and `name` fields for efficiency
+- Orders results by name in ascending order
+
+### Error handling
+
+Throws an error with message "Failed to fetch all customers." if the database query fails.
+
+---
+
+## fetchFilteredCustomers
+
+Fetches customers filtered by search query with aggregated invoice data.
+
+```typescript
+export async function fetchFilteredCustomers(query: string): Promise<FormattedCustomersTable[]>
+```
+
+<ParamField path="query" type="string" required>
+  Search query to filter customers by name or email.
+</ParamField>
+
+<ResponseField name="return" type="Promise<FormattedCustomersTable[]>">
+  Array of customer records with formatted total pending and paid amounts.
+</ResponseField>
+
+### Example
+
+```typescript
+import { fetchFilteredCustomers } from '@/app/lib/data';
+
+const customers = await fetchFilteredCustomers('john');
+// Returns: [{
+//   id: '1',
+//   name: 'John Doe',
+//   email: 'john@example.com',
+//   image_url: '/customers/john.png',
+//   total_invoices: 5,
+//   total_pending: '$1,200.00',
+//   total_paid: '$3,400.00'
+// }]
+```
+
+### Implementation details
+
+- Uses case-insensitive search (ILIKE) on name and email
+- Left joins with invoices to aggregate totals
+- Groups by customer fields
+- Formats pending and paid amounts using `formatCurrency()`
+- Orders by customer name ascending
+
+### Error handling
+
+Throws an error with message "Failed to fetch customer table." if the database query fails.
+
+---
+
+## getUser
+
+Fetches a user by email address for authentication purposes.
+
+```typescript
+export async function getUser(email: string): Promise<User>
+```
+
+<ParamField path="email" type="string" required>
+  The email address of the user to fetch.
+</ParamField>
+
+<ResponseField name="return" type="Promise<User>">
+  User record containing id, name, email, and password.
+</ResponseField>
+
+### Example
+
+```typescript
+import { getUser } from '@/app/lib/data';
+
+const user = await getUser('user@example.com');
+// Returns: { id: '1', name: 'John Doe', email: 'user@example.com', password: '...' }
+```
+
+### Error handling
+
+Throws an error with message "Failed to fetch user." if the database query fails.

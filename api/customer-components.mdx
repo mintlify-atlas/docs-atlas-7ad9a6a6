@@ -1,0 +1,71 @@
+---
+title: Customer components
+description: UI components for displaying and managing customer data
+---
+
+## CustomersTable
+
+Displays a comprehensive table of customers with their profile information, invoice statistics, and payment details. Features responsive layouts for mobile and desktop views.
+
+<ParamField path="customers" type="FormattedCustomersTable[]" required>
+  Array of formatted customer objects to display in the table
+</ParamField>
+
+### FormattedCustomersTable type
+
+```typescript
+type FormattedCustomersTable = {
+  id: string;
+  name: string;
+  email: string;
+  image_url: string;
+  total_invoices: number;
+  total_pending: string;
+  total_paid: string;
+};
+```
+
+### Usage
+
+```tsx
+import CustomersTable from '@/app/ui/customers/table';
+import { fetchFilteredCustomers } from '@/app/lib/data';
+
+export default async function CustomersPage({ 
+  searchParams 
+}: { 
+  searchParams?: { query?: string } 
+}) {
+  const query = searchParams?.query || '';
+  const customers = await fetchFilteredCustomers(query);
+  
+  return (
+    <CustomersTable customers={customers} />
+  );
+}
+```
+
+### Features
+
+- **Responsive design**: Mobile cards and desktop table views
+- **Customer profiles**: Displays profile pictures with customer names
+- **Invoice statistics**: Shows total invoices, pending amounts, and paid amounts
+- **Search integration**: Includes built-in search component
+- **Image optimization**: Uses Next.js Image component for optimal loading
+
+### Desktop view
+
+The table displays five columns:
+- Name (with profile picture)
+- Email
+- Total invoices
+- Total pending
+- Total paid
+
+### Mobile view
+
+Customer information is displayed in card format with:
+- Profile picture and name
+- Email address
+- Pending and paid amounts in a two-column layout
+- Total invoice count

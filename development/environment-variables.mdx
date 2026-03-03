@@ -1,0 +1,344 @@
+---
+title: Environment variables
+description: Configure environment variables for nexDash development and production
+---
+
+nexDash requires several environment variables for database connectivity and authentication. This guide explains each variable and how to configure them.
+
+## Configuration file
+
+Environment variables are stored in `.env.local` for local development. This file should never be committed to version control.
+
+<Warning>
+  Never commit `.env.local` or any file containing secrets to your repository. Add it to `.gitignore`.
+</Warning>
+
+## Quick setup
+
+<Steps>
+  <Step title="Copy the example file">
+    Create your local environment file from the example:
+
+    ```bash
+    cp .env.example .env.local
+    ```
+  </Step>
+
+  <Step title="Get database credentials">
+    1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
+    2. Navigate to **Storage → Postgres**
+    3. Select your database or create a new one
+    4. Copy the connection strings from the **Quickstart** tab
+  </Step>
+
+  <Step title="Generate authentication secret">
+    Generate a secure secret for JWT signing:
+
+    ```bash
+    openssl rand -base64 32
+    ```
+  </Step>
+
+  <Step title="Update .env.local">
+    Paste your values into `.env.local` and save.
+  </Step>
+</Steps>
+
+## Environment variables reference
+
+### Database variables
+
+nexDash uses Vercel Postgres for data storage. All database variables are provided by Vercel when you create a Postgres database.
+
+#### POSTGRES_URL
+
+<ParamField path="POSTGRES_URL" type="string" required>
+  Primary connection string for the Postgres database with connection pooling.
+</ParamField>
+
+```bash
+POSTGRES_URL="postgres://default:abc123@your-db-pooler.postgres.vercel-storage.com/verceldb"
+```
+
+This is the main connection string used by `@vercel/postgres`. It includes:
+- Username and password
+- Host with connection pooler
+- Database name
+
+<Note>
+  Use this URL for most database operations. It includes connection pooling for better performance.
+</Note>
+
+#### POSTGRES_PRISMA_URL
+
+<ParamField path="POSTGRES_PRISMA_URL" type="string" required>
+  Connection string optimized for Prisma ORM with specific pooling parameters.
+</ParamField>
+
+```bash
+POSTGRES_PRISMA_URL="postgres://default:abc123@your-db-pooler.postgres.vercel-storage.com/verceldb?pgbouncer=true&connect_timeout=15"
+```
+
+This URL includes query parameters for optimal Prisma performance:
+- `pgbouncer=true`: Enables PgBouncer compatibility mode
+- `connect_timeout=15`: Sets connection timeout to 15 seconds
+
+#### POSTGRES_URL_NON_POOLING
+
+<ParamField path="POSTGRES_URL_NON_POOLING" type="string" required>
+  Direct database connection without pooling, required for migrations and administrative tasks.
+</ParamField>
+
+```bash
+POSTGRES_URL_NON_POOLING="postgres://default:abc123@your-db.postgres.vercel-storage.com/verceldb"
+```
+
+<Warning>
+  Use this URL only for database migrations, schema changes, or when you specifically need a direct connection. For regular queries, use `POSTGRES_URL`.
+</Warning>
+
+#### POSTGRES_USER
+
+<ParamField path="POSTGRES_USER" type="string" required>
+  Database username for authentication.
+</ParamField>
+
+```bash
+POSTGRES_USER="default"
+```
+
+Typically set to `default` for Vercel Postgres databases.
+
+#### POSTGRES_HOST
+
+<ParamField path="POSTGRES_HOST" type="string" required>
+  Database server hostname.
+</ParamField>
+
+```bash
+POSTGRES_HOST="your-db-pooler.postgres.vercel-storage.com"
+```
+
+This is the host portion of your connection string, including the pooler endpoint.
+
+#### POSTGRES_PASSWORD
+
+<ParamField path="POSTGRES_PASSWORD" type="string" required>
+  Database password for authentication.
+</ParamField>
+
+```bash
+POSTGRES_PASSWORD="your-secure-password"
+```
+
+<Warning>
+  Keep this password secure. Never expose it in client-side code or commit it to version control.
+</Warning>
+
+#### POSTGRES_DATABASE
+
+<ParamField path="POSTGRES_DATABASE" type="string" required>
+  Name of the database to connect to.
+</ParamField>
+
+```bash
+POSTGRES_DATABASE="verceldb"
+```
+
+Default database name for Vercel Postgres is `verceldb`.
+
+### Authentication variables
+
+nexDash uses NextAuth.js for authentication, which requires configuration for session management and API routes.
+
+#### AUTH_SECRET
+
+<ParamField path="AUTH_SECRET" type="string" required>
+  Secret key used to encrypt JWT tokens and sessions.
+</ParamField>
+
+```bash
+AUTH_SECRET="your-generated-secret-here"
+```
+
+Generate a cryptographically secure secret using:
+
+```bash
+openssl rand -base64 32
+```
+
+<Warning>
+  Use a different `AUTH_SECRET` for production and development. Never reuse secrets across environments.
+</Warning>
+
+#### AUTH_URL
+
+<ParamField path="AUTH_URL" type="string" required>
+  Base URL for authentication API routes.
+</ParamField>
+
+<CodeGroup>
+```bash Development
+AUTH_URL="http://localhost:3000/api/auth"
+```
+
+```bash Production
+AUTH_URL="https://your-domain.com/api/auth"
+```
+</CodeGroup>
+
+This URL is used by NextAuth.js for:
+- Callback URLs
+- Session validation
+- API route resolution
+
+<Note>
+  In development, this should point to `http://localhost:3000/api/auth`. In production, use your actual domain.
+</Note>
+
+## Complete example
+
+Here's a complete `.env.local` file with all required variables:
+
+```bash
+# Database Configuration
+# Copy these from your Vercel Postgres dashboard
+POSTGRES_URL="postgres://default:abc123@ep-cool-darkness-123456-pooler.us-east-1.postgres.vercel-storage.com/verceldb"
+POSTGRES_PRISMA_URL="postgres://default:abc123@ep-cool-darkness-123456-pooler.us-east-1.postgres.vercel-storage.com/verceldb?pgbouncer=true&connect_timeout=15"
+POSTGRES_URL_NON_POOLING="postgres://default:abc123@ep-cool-darkness-123456.us-east-1.postgres.vercel-storage.com/verceldb"
+POSTGRES_USER="default"
+POSTGRES_HOST="ep-cool-darkness-123456-pooler.us-east-1.postgres.vercel-storage.com"
+POSTGRES_PASSWORD="abc123"
+POSTGRES_DATABASE="verceldb"
+
+# Authentication Configuration
+# Generate AUTH_SECRET using: openssl rand -base64 32
+AUTH_SECRET="Lhq7tRZZvJ0P8kKl3mNp9QrStUvWxYz1"
+AUTH_URL="http://localhost:3000/api/auth"
+```
+
+## Environment-specific configuration
+
+### Development
+
+For local development, use `.env.local`:
+
+```bash
+# .env.local
+POSTGRES_URL="postgres://..."  # Can use production or dev database
+AUTH_URL="http://localhost:3000/api/auth"
+AUTH_SECRET="dev-secret-key"
+```
+
+### Production (Vercel)
+
+For production on Vercel, set environment variables in the dashboard:
+
+1. Go to **Project Settings → Environment Variables**
+2. Add each variable with scope set to **Production**
+3. Update `AUTH_URL` to match your production domain
+
+```bash
+# Production environment
+AUTH_URL="https://nexdash.vercel.app/api/auth"
+AUTH_SECRET="production-secret-key"  # Different from dev!
+```
+
+### Preview (Vercel)
+
+For preview deployments:
+
+```bash
+# Preview environment
+AUTH_URL="https://nexdash-git-branch.vercel.app/api/auth"
+```
+
+<Note>
+  Vercel automatically sets the correct `AUTH_URL` for preview deployments if you use the `VERCEL_URL` environment variable.
+</Note>
+
+## Accessing environment variables
+
+In your Next.js code, access environment variables using `process.env`:
+
+```typescript
+import { db } from '@vercel/postgres';
+
+// Database connection uses POSTGRES_URL automatically
+const client = await db.connect();
+
+// Access other variables
+const authSecret = process.env.AUTH_SECRET;
+const authUrl = process.env.AUTH_URL;
+```
+
+<Warning>
+  Only environment variables prefixed with `NEXT_PUBLIC_` are exposed to the browser. Never prefix sensitive variables like database credentials or secrets with `NEXT_PUBLIC_`.
+</Warning>
+
+## Troubleshooting
+
+### Missing environment variables
+
+If you see errors about missing environment variables:
+
+```bash
+Error: Missing environment variable: POSTGRES_URL
+```
+
+Solutions:
+1. Verify `.env.local` exists in your project root
+2. Check that variable names match exactly (case-sensitive)
+3. Restart your development server after adding variables
+
+### Database connection errors
+
+If database connections fail:
+
+1. **Check your connection string**: Ensure it's copied correctly from Vercel
+2. **Verify database is active**: Check Vercel dashboard
+3. **Test connection**: Use the non-pooling URL to rule out pooler issues
+
+### Authentication errors
+
+If authentication fails:
+
+1. **Verify AUTH_URL matches your environment**: Should be `localhost:3000` in development
+2. **Check AUTH_SECRET is set**: Must be at least 32 characters
+3. **Regenerate AUTH_SECRET**: Use `openssl rand -base64 32`
+
+## Security best practices
+
+<Steps>
+  <Step title="Never commit secrets">
+    Add `.env.local` to `.gitignore`:
+
+    ```bash .gitignore
+    # Environment variables
+    .env.local
+    .env*.local
+    ```
+  </Step>
+
+  <Step title="Use different secrets per environment">
+    Never reuse `AUTH_SECRET` between development, preview, and production.
+  </Step>
+
+  <Step title="Rotate secrets regularly">
+    Update `AUTH_SECRET` and database passwords periodically.
+  </Step>
+
+  <Step title="Limit access">
+    Only share credentials with team members who need them. Use Vercel team features for collaboration.
+  </Step>
+</Steps>
+
+## Loading environment variables
+
+Next.js automatically loads environment variables from:
+
+1. `.env.local` (highest priority, never committed)
+2. `.env.production` or `.env.development` (environment-specific)
+3. `.env` (default values, can be committed)
+
+The `.env.example` file serves as a template showing which variables are required, but contains no actual values.

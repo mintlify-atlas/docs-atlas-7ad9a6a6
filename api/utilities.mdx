@@ -1,0 +1,208 @@
+---
+title: Utility functions
+description: Helper functions for formatting currency, dates, and generating UI elements like pagination and chart axes.
+---
+
+This module provides utility functions for common data formatting and transformation tasks used throughout the application.
+
+## formatCurrency
+
+Formats a numeric amount (in cents) to a localized currency string.
+
+```typescript
+export const formatCurrency = (amount: number): string
+```
+
+<ParamField path="amount" type="number" required>
+  The amount in cents to format (e.g., 1000 represents $10.00).
+</ParamField>
+
+<ResponseField name="return" type="string">
+  Formatted currency string in USD format (e.g., '$10.00').
+</ResponseField>
+
+### Example
+
+```typescript
+import { formatCurrency } from '@/app/lib/utils';
+
+const formatted = formatCurrency(150000);
+// Returns: '$1,500.00'
+
+const small = formatCurrency(50);
+// Returns: '$0.50'
+```
+
+### Implementation details
+
+- Divides the amount by 100 to convert from cents to dollars
+- Uses `toLocaleString()` with 'en-US' locale
+- Applies USD currency formatting with standard symbols and separators
+
+---
+
+## formatDateToLocal
+
+Formats an ISO date string to a localized date format.
+
+```typescript
+export const formatDateToLocal = (
+  dateStr: string,
+  locale: string = 'en-US'
+): string
+```
+
+<ParamField path="dateStr" type="string" required>
+  ISO date string to format (e.g., '2024-03-15').
+</ParamField>
+
+<ParamField path="locale" type="string" default="'en-US'">
+  Locale string for date formatting (defaults to 'en-US').
+</ParamField>
+
+<ResponseField name="return" type="string">
+  Formatted date string in the specified locale.
+</ResponseField>
+
+### Example
+
+```typescript
+import { formatDateToLocal } from '@/app/lib/utils';
+
+const date = formatDateToLocal('2024-03-15');
+// Returns: 'Mar 15, 2024' (in en-US locale)
+
+const ukDate = formatDateToLocal('2024-03-15', 'en-GB');
+// Returns: '15 Mar 2024' (in en-GB locale)
+```
+
+### Implementation details
+
+- Converts the date string to a Date object
+- Uses `Intl.DateTimeFormat` with specified locale
+- Formats with numeric day, short month name, and numeric year
+
+---
+
+## generateYAxis
+
+Generates Y-axis labels for revenue charts based on the highest revenue value.
+
+```typescript
+export const generateYAxis = (revenue: Revenue[]): {
+  yAxisLabels: string[];
+  topLabel: number;
+}
+```
+
+<ParamField path="revenue" type="Revenue[]" required>
+  Array of revenue objects containing month and revenue data.
+</ParamField>
+
+<ResponseField name="return" type="object">
+  Object containing Y-axis configuration.
+  
+  <ResponseField name="yAxisLabels" type="string[]">
+    Array of formatted label strings for the Y-axis (e.g., ['$10K', '$9K', '$8K', ...]).
+  </ResponseField>
+  
+  <ResponseField name="topLabel" type="number">
+    Numeric value of the highest Y-axis label.
+  </ResponseField>
+</ResponseField>
+
+### Example
+
+```typescript
+import { generateYAxis } from '@/app/lib/utils';
+
+const revenue = [
+  { month: 'Jan', revenue: 2000 },
+  { month: 'Feb', revenue: 1800 },
+  { month: 'Mar', revenue: 2200 },
+];
+
+const axis = generateYAxis(revenue);
+// Returns: {
+//   yAxisLabels: ['$3K', '$2K', '$1K', '$0K'],
+//   topLabel: 3000
+// }
+```
+
+### Implementation details
+
+- Finds the maximum revenue value from the array
+- Rounds up to the nearest thousand
+- Generates labels in descending order from top to zero
+- Labels are formatted with 'K' suffix for thousands
+- Increments by 1000 between each label
+
+---
+
+## generatePagination
+
+Generates pagination numbers with ellipsis for large page counts.
+
+```typescript
+export const generatePagination = (
+  currentPage: number,
+  totalPages: number
+): (number | string)[]
+```
+
+<ParamField path="currentPage" type="number" required>
+  The current active page number (1-indexed).
+</ParamField>
+
+<ParamField path="totalPages" type="number" required>
+  Total number of available pages.
+</ParamField>
+
+<ResponseField name="return" type="(number | string)[]">
+  Array of page numbers and ellipsis strings ('...') for pagination UI.
+</ResponseField>
+
+### Example
+
+```typescript
+import { generatePagination } from '@/app/lib/utils';
+
+// Small page count (7 or fewer pages)
+const small = generatePagination(3, 5);
+// Returns: [1, 2, 3, 4, 5]
+
+// Current page near start
+const start = generatePagination(2, 10);
+// Returns: [1, 2, 3, '...', 9, 10]
+
+// Current page near end
+const end = generatePagination(9, 10);
+// Returns: [1, 2, '...', 8, 9, 10]
+
+// Current page in middle
+const middle = generatePagination(5, 10);
+// Returns: [1, '...', 4, 5, 6, '...', 10]
+```
+
+### Implementation details
+
+The function uses different strategies based on page count and current position:
+
+**7 pages or fewer:**
+- Shows all page numbers without ellipsis
+
+**Current page in first 3 positions:**
+- Shows first 3 pages, ellipsis, then last 2 pages
+- Example: `[1, 2, 3, '...', 9, 10]`
+
+**Current page in last 3 positions:**
+- Shows first 2 pages, ellipsis, then last 3 pages
+- Example: `[1, 2, '...', 8, 9, 10]`
+
+**Current page in middle:**
+- Shows first page, ellipsis, current page with neighbors, ellipsis, last page
+- Example: `[1, '...', 4, 5, 6, '...', 10]`
+
+### Use case
+
+This function is ideal for creating pagination controls that remain compact and user-friendly even with large numbers of pages, ensuring the UI doesn't become cluttered while still providing clear navigation options.

@@ -1,0 +1,175 @@
+---
+title: Welcome to nexDash
+description: A modern Next.js 14 dashboard for managing customers, invoices, and revenue with TypeScript, React, and Vercel Postgres
+---
+
+<img
+  className="block"
+  src="/images/hero-light.svg"
+  alt="nexDash Hero Light"
+/>
+
+## What is nexDash?
+
+nexDash is a full-featured SaaS dashboard application built with Next.js 14, designed to help you manage customers, track invoices, and visualize revenue data. Built with modern web technologies and best practices, nexDash provides a solid foundation for building production-ready business applications.
+
+<CardGroup cols={2}>
+  <Card
+    title="Quick start"
+    icon="rocket"
+    href="/quickstart"
+  >
+    Get nexDash running locally in under 5 minutes
+  </Card>
+  <Card
+    title="Installation"
+    icon="download"
+    href="/installation"
+  >
+    Complete installation guide with prerequisites and setup
+  </Card>
+  <Card
+    title="Database setup"
+    icon="database"
+    href="/development/database-setup"
+  >
+    Configure Vercel Postgres and seed your database
+  </Card>
+  <Card
+    title="Authentication"
+    icon="lock"
+    href="/features/authentication"
+  >
+    Learn about user authentication and security
+  </Card>
+</CardGroup>
+
+## Key features
+
+<AccordionGroup>
+  <Accordion title="Customer management" icon="users">
+    Comprehensive customer database with profile management, contact information, and invoice history tracking. Built with server-side rendering for optimal performance.
+  </Accordion>
+
+  <Accordion title="Invoice tracking" icon="file-invoice">
+    Create, edit, and manage invoices with status tracking (pending/paid). Includes automatic calculations and customer associations.
+  </Accordion>
+
+  <Accordion title="Revenue analytics" icon="chart-line">
+    Visual revenue charts and analytics dashboard powered by real-time data from Vercel Postgres. Track monthly trends and financial metrics.
+  </Accordion>
+
+  <Accordion title="Secure authentication" icon="shield-check">
+    Built-in user authentication with bcrypt password hashing. Includes protected routes and session management.
+  </Accordion>
+
+  <Accordion title="Modern tech stack" icon="layer-group">
+    Next.js 14 with App Router, TypeScript, React 18, Tailwind CSS, and Vercel Postgres for a production-ready foundation.
+  </Accordion>
+</AccordionGroup>
+
+## Tech stack
+
+nexDash is built with cutting-edge technologies:
+
+<CardGroup cols={3}>
+  <Card title="Next.js 14" icon="N">
+    React framework with App Router, Server Components, and Server Actions
+  </Card>
+  <Card title="TypeScript" icon="code">
+    Type-safe development with full TypeScript support
+  </Card>
+  <Card title="Tailwind CSS" icon="palette">
+    Utility-first CSS framework for rapid UI development
+  </Card>
+  <Card title="Vercel Postgres" icon="database">
+    Serverless Postgres database with pooling support
+  </Card>
+  <Card title="React 18" icon="react">
+    Latest React features including Suspense and Streaming
+  </Card>
+  <Card title="bcrypt" icon="lock">
+    Industry-standard password hashing for security
+  </Card>
+</CardGroup>
+
+## Core capabilities
+
+### Dashboard overview
+
+The main dashboard provides a comprehensive view of your business metrics:
+
+- Total revenue with trend indicators
+- Invoice status summary (pending vs. paid)
+- Customer count and recent activity
+- Monthly revenue chart visualization
+
+### Data management
+
+nexDash includes robust data management features:
+
+<Steps>
+  <Step title="Customers">
+    Manage customer profiles with name, email, and profile images. Each customer has a detailed view showing all associated invoices.
+  </Step>
+  <Step title="Invoices">
+    Track invoices with amount, status, date, and customer association. Filter and search capabilities included.
+  </Step>
+  <Step title="Revenue">
+    Monthly revenue tracking with visual charts. Data is stored and retrieved efficiently from Postgres.
+  </Step>
+</Steps>
+
+## Getting started
+
+Ready to dive in? Choose your path:
+
+<CardGroup cols={2}>
+  <Card
+    title="Quick start guide"
+    icon="bolt"
+    href="/quickstart"
+  >
+    Clone, configure, and run nexDash in minutes
+  </Card>
+  <Card
+    title="Detailed installation"
+    icon="book"
+    href="/installation"
+  >
+    Step-by-step installation with all prerequisites
+  </Card>
+</CardGroup>
+
+<Note>
+  nexDash requires Node.js 18.17.0 or higher. Make sure you have the correct version installed before proceeding.
+</Note>
+
+## Sample data included
+
+nexDash comes with placeholder data to help you get started quickly:
+
+- 10 sample customers with profile images
+- 15 sample invoices with various statuses
+- 12 months of revenue data
+- Demo user account for testing authentication
+
+You can seed this data to your database with a single command (covered in the quick start guide).
+
+## What's next?
+
+After getting nexDash running, explore these topics:
+
+- Customize the dashboard layout and styling
+- Connect to your own Postgres database
+- Add new features and functionality
+- Deploy to Vercel or your preferred hosting platform
+- Implement advanced authentication flows
+
+<Card
+  title="Start with the quick start guide"
+  icon="forward"
+  href="/quickstart"
+>
+  Get nexDash running on your machine now
+</Card>

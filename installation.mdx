@@ -1,0 +1,676 @@
+---
+title: Installation
+description: Complete installation guide for nexDash with detailed prerequisites, dependencies, and configuration
+---
+
+This comprehensive guide walks you through installing nexDash, from system requirements to running your first development server.
+
+## System requirements
+
+Before installing nexDash, ensure your system meets these requirements:
+
+<CardGroup cols={2}>
+  <Card title="Node.js" icon="node-js">
+    **Version 18.17.0 or higher**
+    
+    Required for Next.js 14 and modern JavaScript features
+  </Card>
+  <Card title="Package manager" icon="box">
+    **npm, yarn, or pnpm**
+    
+    npm comes bundled with Node.js
+  </Card>
+  <Card title="Git" icon="git">
+    **Latest version**
+    
+    For cloning the repository
+  </Card>
+  <Card title="Database" icon="database">
+    **Vercel Postgres**
+    
+    Free tier available with Vercel account
+  </Card>
+</CardGroup>
+
+### Check your Node.js version
+
+Verify you have the correct Node.js version:
+
+```bash
+node --version
+```
+
+You should see output like:
+
+```bash
+v18.17.0  # or higher
+```
+
+<Warning>
+  nexDash requires Node.js 18.17.0 or higher. If your version is lower, download the latest LTS version from [nodejs.org](https://nodejs.org/).
+</Warning>
+
+### Node Version Manager (recommended)
+
+For managing multiple Node.js versions, we recommend using nvm:
+
+<CodeGroup>
+```bash Install nvm (macOS/Linux)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+```
+
+```bash Install nvm (Windows)
+# Use nvm-windows from:
+# https://github.com/coreybutler/nvm-windows/releases
+```
+</CodeGroup>
+
+Then install and use the required Node.js version:
+
+```bash
+nvm install 18.17.0
+nvm use 18.17.0
+```
+
+<Note>
+  nexDash includes a `.nvmrc` file that specifies the required Node.js version. If you use nvm, simply run `nvm use` in the project directory.
+</Note>
+
+## Installation steps
+
+<Steps>
+  <Step title="Clone the repository">
+    Get the nexDash source code on your local machine
+  </Step>
+  <Step title="Install dependencies">
+    Install all required npm packages
+  </Step>
+  <Step title="Set up database">
+    Create and configure Vercel Postgres database
+  </Step>
+  <Step title="Configure environment">
+    Set up environment variables
+  </Step>
+  <Step title="Initialize database">
+    Create tables and seed sample data
+  </Step>
+  <Step title="Run development server">
+    Start the local development environment
+  </Step>
+</Steps>
+
+### 1. Clone the repository
+
+Clone the nexDash repository:
+
+<CodeGroup>
+```bash HTTPS
+git clone https://github.com/yourusername/nexdash.git
+cd nexdash
+```
+
+```bash SSH
+git clone git@github.com:yourusername/nexdash.git
+cd nexdash
+```
+
+```bash GitHub CLI
+gh repo clone yourusername/nexdash
+cd nexdash
+```
+</CodeGroup>
+
+### 2. Install dependencies
+
+Install all project dependencies using npm:
+
+```bash
+npm install
+```
+
+<Accordion title="What gets installed?">
+  nexDash includes the following dependencies:
+
+  **Production dependencies:**
+  ```json package.json
+  {
+    "dependencies": {
+      "@heroicons/react": "^2.0.18",
+      "@tailwindcss/forms": "^0.5.7",
+      "@types/node": "20.5.7",
+      "@vercel/postgres": "^0.5.0",
+      "autoprefixer": "10.4.15",
+      "bcrypt": "^5.1.1",
+      "clsx": "^2.0.0",
+      "next": "^14.0.2",
+      "postcss": "8.4.31",
+      "react": "18.2.0",
+      "react-dom": "18.2.0",
+      "tailwindcss": "3.3.3",
+      "typescript": "5.2.2",
+      "zod": "^3.22.2"
+    }
+  }
+  ```
+
+  **Development dependencies:**
+  ```json package.json
+  {
+    "devDependencies": {
+      "@types/bcrypt": "^5.0.1",
+      "@types/react": "18.2.21",
+      "@types/react-dom": "18.2.14",
+      "@vercel/style-guide": "^5.0.1",
+      "dotenv": "^16.3.1",
+      "eslint": "^8.52.0",
+      "eslint-config-next": "^14.0.0",
+      "eslint-config-prettier": "9.0.0",
+      "prettier": "^3.0.3",
+      "prettier-plugin-tailwindcss": "0.5.4"
+    }
+  }
+  ```
+</Accordion>
+
+## Dependency overview
+
+### Framework & runtime
+
+<AccordionGroup>
+  <Accordion title="Next.js 14" icon="N">
+    **Version:** ^14.0.2
+    
+    Next.js is the React framework that powers nexDash. Version 14 includes:
+    - App Router architecture
+    - React Server Components
+    - Server Actions for mutations
+    - Optimized image and font loading
+    - Built-in TypeScript support
+    
+    nexDash uses the modern App Router pattern located in the `/app` directory.
+  </Accordion>
+
+  <Accordion title="React 18" icon="react">
+    **Version:** 18.2.0
+    
+    React 18 provides:
+    - Concurrent rendering features
+    - Automatic batching
+    - Suspense for data fetching
+    - Server Components support
+    
+    Both `react` and `react-dom` are required for rendering.
+  </Accordion>
+
+  <Accordion title="TypeScript" icon="code">
+    **Version:** 5.2.2
+    
+    TypeScript enables type-safe development with:
+    - Static type checking
+    - IntelliSense and autocomplete
+    - Refactoring support
+    - Compile-time error detection
+    
+    Configuration is defined in `tsconfig.json`.
+  </Accordion>
+</AccordionGroup>
+
+### Database & authentication
+
+<AccordionGroup>
+  <Accordion title="Vercel Postgres" icon="database">
+    **Package:** @vercel/postgres ^0.5.0
+    
+    Serverless Postgres database with:
+    - Connection pooling
+    - SQL query builder
+    - Edge runtime support
+    - Automatic SSL connections
+    
+    Used for storing customers, invoices, revenue, and user data.
+  </Accordion>
+
+  <Accordion title="bcrypt" icon="lock">
+    **Version:** ^5.1.1
+    
+    Industry-standard password hashing:
+    - One-way encryption
+    - Salt generation
+    - Timing-safe comparison
+    - Adjustable cost factor
+    
+    Used for securely storing user passwords in the database.
+  </Accordion>
+
+  <Accordion title="Zod" icon="shield-check">
+    **Version:** ^3.22.2
+    
+    TypeScript-first schema validation:
+    - Runtime type checking
+    - Form validation
+    - API request validation
+    - Type inference
+    
+    Ensures data integrity throughout the application.
+  </Accordion>
+</AccordionGroup>
+
+### UI & styling
+
+<AccordionGroup>
+  <Accordion title="Tailwind CSS" icon="palette">
+    **Version:** 3.3.3
+    
+    Utility-first CSS framework:
+    - Responsive design utilities
+    - Dark mode support
+    - Custom theme configuration
+    - JIT (Just-In-Time) compiler
+    
+    Configuration: `tailwind.config.ts`
+    PostCSS config: `postcss.config.js`
+  </Accordion>
+
+  <Accordion title="@tailwindcss/forms" icon="input-text">
+    **Version:** ^0.5.7
+    
+    Form styling plugin providing:
+    - Normalized form controls
+    - Consistent cross-browser styling
+    - Easy customization
+    - Accessibility improvements
+  </Accordion>
+
+  <Accordion title="Heroicons" icon="sparkles">
+    **Package:** @heroicons/react ^2.0.18
+    
+    Beautiful hand-crafted SVG icons:
+    - 200+ icons in outline and solid styles
+    - React components
+    - Fully customizable
+    - Optimized for Tailwind CSS
+  </Accordion>
+
+  <Accordion title="clsx" icon="layer-group">
+    **Version:** ^2.0.0
+    
+    Utility for constructing className strings:
+    - Conditional classes
+    - Merge class names
+    - Tiny bundle size (228 bytes)
+    - TypeScript support
+  </Accordion>
+</AccordionGroup>
+
+## Database setup
+
+### Create Vercel Postgres database
+
+<Steps>
+  <Step title="Sign up for Vercel">
+    1. Go to [vercel.com](https://vercel.com)
+    2. Sign up using GitHub, GitLab, or Bitbucket
+    3. Complete the onboarding process
+  </Step>
+
+  <Step title="Create a project">
+    1. Click "Add New" → "Project"
+    2. Import your nexDash repository (or create a new project)
+    3. Leave default settings and click "Deploy"
+  </Step>
+
+  <Step title="Add Postgres storage">
+    1. In your project dashboard, go to the "Storage" tab
+    2. Click "Create Database"
+    3. Select "Postgres"
+    4. Choose a database name and region
+    5. Click "Create"
+  </Step>
+
+  <Step title="Get connection strings">
+    1. Once created, click on your database
+    2. Go to the ".env.local" tab
+    3. Copy all the `POSTGRES_*` environment variables
+  </Step>
+</Steps>
+
+<Note>
+  Vercel Postgres offers a free tier with:
+  - 256 MB storage
+  - 60 hours of compute per month
+  - Sufficient for development and testing
+</Note>
+
+### Database schema
+
+The nexDash database consists of four main tables:
+
+<CodeGroup>
+```sql users
+CREATE TABLE users (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email TEXT NOT NULL UNIQUE,
+  password TEXT NOT NULL
+);
+```
+
+```sql customers
+CREATE TABLE customers (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  image_url VARCHAR(255) NOT NULL
+);
+```
+
+```sql invoices
+CREATE TABLE invoices (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  customer_id UUID NOT NULL,
+  amount INT NOT NULL,
+  status VARCHAR(255) NOT NULL,
+  date DATE NOT NULL
+);
+```
+
+```sql revenue
+CREATE TABLE revenue (
+  month VARCHAR(4) NOT NULL UNIQUE,
+  revenue INT NOT NULL
+);
+```
+</CodeGroup>
+
+## Environment configuration
+
+### Create .env file
+
+Copy the example environment file:
+
+```bash
+cp .env.example .env
+```
+
+### Configure environment variables
+
+Edit the `.env` file with your values:
+
+```bash .env
+# Vercel Postgres connection strings
+# Copy these from your Vercel dashboard
+POSTGRES_URL="postgres://default:xxx@xxx.postgres.vercel-storage.com:5432/verceldb"
+POSTGRES_PRISMA_URL="postgres://default:xxx@xxx.postgres.vercel-storage.com:5432/verceldb?pgbouncer=true&connect_timeout=15"
+POSTGRES_URL_NON_POOLING="postgres://default:xxx@xxx.postgres.vercel-storage.com:5432/verceldb"
+POSTGRES_USER="default"
+POSTGRES_HOST="xxx.postgres.vercel-storage.com"
+POSTGRES_PASSWORD="xxx"
+POSTGRES_DATABASE="verceldb"
+
+# Authentication
+# Generate using: openssl rand -base64 32
+AUTH_SECRET="your-secret-key-here"
+AUTH_URL="http://localhost:3000/api/auth"
+```
+
+<Warning>
+  **Security best practices:**
+  
+  - Never commit `.env` to version control
+  - Use different credentials for development and production
+  - Rotate secrets regularly
+  - Generate strong random values for `AUTH_SECRET`
+</Warning>
+
+### Generate AUTH_SECRET
+
+Generate a cryptographically secure random string:
+
+<CodeGroup>
+```bash OpenSSL (macOS/Linux)
+openssl rand -base64 32
+```
+
+```powershell Windows PowerShell
+[Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Minimum 0 -Maximum 256 }))
+```
+
+```bash Node.js
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+```
+
+```bash Python
+python -c "import secrets; print(secrets.token_urlsafe(32))"
+```
+</CodeGroup>
+
+## Initialize the database
+
+### Seed sample data
+
+Run the seed script to create tables and populate sample data:
+
+```bash
+node scripts/seed.js
+```
+
+Expected output:
+
+```bash
+Created "users" table
+Seeded 1 users
+Created "customers" table
+Seeded 10 customers
+Created "invoices" table
+Seeded 15 invoices
+Created "revenue" table
+Seeded 12 revenue
+```
+
+<Accordion title="View seed script details">
+  The seed script (`scripts/seed.js`) performs these operations:
+
+  1. **Enable UUID extension**
+     ```javascript
+     await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+     ```
+
+  2. **Create tables**
+     Creates users, customers, invoices, and revenue tables if they don't exist
+
+  3. **Hash passwords**
+     ```javascript
+     const hashedPassword = await bcrypt.hash(user.password, 10);
+     ```
+
+  4. **Insert sample data**
+     - 1 demo user (user@nextmail.com / 123456)
+     - 10 customers with profile images
+     - 15 invoices with various statuses
+     - 12 months of revenue data
+
+  5. **Handle conflicts**
+     Uses `ON CONFLICT DO NOTHING` to safely re-run the script
+</Accordion>
+
+### Demo credentials
+
+After seeding, you can log in with:
+
+```text
+Email: user@nextmail.com
+Password: 123456
+```
+
+<Warning>
+  The demo password is intentionally weak for development. In production, enforce strong password requirements.
+</Warning>
+
+## Development server
+
+### Start the server
+
+Run the development server:
+
+```bash
+npm run dev
+```
+
+You should see:
+
+```bash
+> next dev
+
+  ▲ Next.js 14.0.2
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Ready in 2.3s
+```
+
+### Available scripts
+
+<CodeGroup>
+```bash Development
+npm run dev
+# Starts development server with hot reload
+```
+
+```bash Build
+npm run build
+# Creates optimized production build
+```
+
+```bash Start production
+npm run start
+# Starts production server (requires build first)
+```
+
+```bash Format
+npm run prettier
+# Formats all files with Prettier
+```
+
+```bash Format check
+npm run prettier:check
+# Checks formatting without making changes
+```
+</CodeGroup>
+
+## Project structure
+
+Understanding the nexDash project structure:
+
+```
+nexdash/
+├── app/                    # Next.js App Router
+│   ├── dashboard/         # Dashboard pages
+│   │   ├── customers/    # Customer management
+│   │   ├── invoices/     # Invoice management
+│   │   ├── layout.tsx    # Dashboard layout
+│   │   └── page.tsx      # Dashboard home
+│   ├── lib/              # Utility functions
+│   │   ├── data.ts       # Data fetching functions
+│   │   ├── definitions.ts # TypeScript types
+│   │   ├── placeholder-data.js # Sample data
+│   │   └── utils.ts      # Helper functions
+│   ├── ui/               # React components
+│   ├── layout.tsx        # Root layout
+│   └── page.tsx          # Landing page
+├── public/               # Static assets
+├── scripts/              # Utility scripts
+│   └── seed.js          # Database seeding
+├── .env                  # Environment variables (create this)
+├── .env.example         # Environment template
+├── next.config.js       # Next.js configuration
+├── tailwind.config.ts   # Tailwind configuration
+├── tsconfig.json        # TypeScript configuration
+└── package.json         # Dependencies and scripts
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Node.js version error">
+    **Error:** "The engine 'node' is incompatible"
+    
+    **Solution:**
+    1. Check your Node.js version: `node --version`
+    2. Install Node.js 18.17.0 or higher
+    3. If using nvm: `nvm install 18.17.0 && nvm use 18.17.0`
+  </Accordion>
+
+  <Accordion title="Database connection fails">
+    **Error:** "Connection refused" or "Unable to connect"
+    
+    **Solution:**
+    1. Verify all `POSTGRES_*` variables are set in `.env`
+    2. Check Vercel dashboard to ensure database is active
+    3. Confirm you're using the correct connection strings
+    4. Test connection: `node -e "require('@vercel/postgres').db.connect()"`
+  </Accordion>
+
+  <Accordion title="bcrypt installation fails">
+    **Error:** "node-gyp" or compilation errors
+    
+    **Solution:**
+    1. Install build tools:
+       - macOS: `xcode-select --install`
+       - Windows: `npm install --global windows-build-tools`
+       - Linux: `apt-get install build-essential`
+    2. Reinstall bcrypt: `npm install bcrypt`
+  </Accordion>
+
+  <Accordion title="Port 3000 already in use">
+    **Error:** "Port 3000 is already in use"
+    
+    **Solution:**
+    1. Find and stop the process: `lsof -ti:3000 | xargs kill`
+    2. Or use a different port: `npm run dev -- -p 3001`
+    3. Next.js will auto-increment if port is busy
+  </Accordion>
+
+  <Accordion title="TypeScript errors">
+    **Error:** Type errors during build or development
+    
+    **Solution:**
+    1. Delete `.next` directory: `rm -rf .next`
+    2. Reinstall dependencies: `rm -rf node_modules && npm install`
+    3. Restart TypeScript server in your editor
+    4. Check `tsconfig.json` configuration
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Quick start guide"
+    icon="rocket"
+    href="/quickstart"
+  >
+    Follow the condensed quick start for a faster setup
+  </Card>
+  <Card
+    title="Database configuration"
+    icon="database"
+  >
+    Learn advanced database configuration and optimization
+  </Card>
+  <Card
+    title="Authentication"
+    icon="lock"
+  >
+    Understand the authentication system and user management
+  </Card>
+  <Card
+    title="Deployment"
+    icon="cloud"
+  >
+    Deploy nexDash to production on Vercel
+  </Card>
+</CardGroup>
+
+<Tip>
+  Join the nexDash community for help, tips, and to share your customizations.
+</Tip>

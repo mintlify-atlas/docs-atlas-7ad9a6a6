@@ -1,0 +1,183 @@
+---
+title: Revenue visualization
+description: Track and visualize your monthly revenue trends with interactive charts
+---
+
+The revenue visualization feature provides a clear view of your business performance over time. Monitor monthly revenue trends to understand your business growth and identify patterns.
+
+## Revenue overview
+
+Revenue data in nexDash represents your monthly income, calculated from paid invoices. The revenue chart displays the last 12 months of data to help you track business performance.
+
+### Revenue data structure
+
+```typescript
+type Revenue = {
+  month: string;  // Month name (e.g., "Jan", "Feb")
+  revenue: number;  // Revenue amount for the month
+}
+```
+
+<Note>
+  Revenue data is aggregated from all invoices marked as "paid" during each month.
+</Note>
+
+## Revenue chart
+
+The revenue chart appears on your main dashboard, providing a visual representation of your monthly income.
+
+### Chart features
+
+<Tabs>
+  <Tab title="Visual elements">
+    The revenue chart includes:
+    - **Bar chart** - Each bar represents one month's revenue
+    - **Y-axis labels** - Show revenue amounts in USD
+    - **X-axis labels** - Display month names
+    - **Height scaling** - Bars scale proportionally to revenue amounts
+    - **12-month view** - Displays the last year of revenue data
+  </Tab>
+  <Tab title="Interactive elements">
+    - Hover over bars to see exact amounts
+    - Responsive design adapts to screen size
+    - Mobile-friendly vertical layout
+    - Calendar icon indicator showing time period
+  </Tab>
+</Tabs>
+
+### Chart dimensions
+
+The revenue chart uses the following specifications:
+
+```typescript
+const chartHeight = 350;  // pixels
+```
+
+Bar heights are calculated proportionally:
+
+```typescript
+barHeight = (chartHeight / topLabel) * month.revenue
+```
+
+## Understanding revenue metrics
+
+<AccordionGroup>
+  <Accordion title="How is revenue calculated?">
+    Revenue is the sum of all invoices with a `paid` status for each month. Only completed payments contribute to revenue figures.
+  </Accordion>
+  
+  <Accordion title="What time period is shown?">
+    The chart displays the last 12 months of revenue data, giving you a full year view of business performance at a glance.
+  </Accordion>
+  
+  <Accordion title="When does revenue update?">
+    Revenue data updates when:
+    - An invoice is marked as paid
+    - An invoice status changes from paid to pending (revenue decreases)
+    - A paid invoice is deleted
+  </Accordion>
+  
+  <Accordion title="Why might I see no data?">
+    If you see "No data available", it means:
+    - No invoices have been marked as paid yet
+    - The revenue data hasn't been fetched from the database
+    - There's a connection issue with the database
+  </Accordion>
+</AccordionGroup>
+
+## Dashboard summary cards
+
+In addition to the revenue chart, your dashboard displays key metrics in summary cards:
+
+### Available metrics
+
+<CardGroup cols={2}>
+  <Card title="Collected" icon="banknotes">
+    Total amount from all paid invoices. Represents revenue successfully collected from customers.
+  </Card>
+  <Card title="Pending" icon="clock">
+    Total amount from all pending invoices. Shows expected revenue once customers pay.
+  </Card>
+  <Card title="Total invoices" icon="inbox">
+    Count of all invoices in the system, regardless of payment status.
+  </Card>
+  <Card title="Total customers" icon="user-group">
+    Count of all customers in your nexDash account.
+  </Card>
+</CardGroup>
+
+### Card data structure
+
+```typescript
+interface DashboardCardData {
+  numberOfCustomers: number;
+  numberOfInvoices: number;
+  totalPaidInvoices: string;    // Formatted currency
+  totalPendingInvoices: string; // Formatted currency
+}
+```
+
+## Revenue data fetching
+
+Revenue data is fetched from the database using the `fetchRevenue()` function:
+
+```typescript
+export async function fetchRevenue() {
+  const data = await sql<Revenue>`SELECT * FROM revenue`;
+  return data.rows;
+}
+```
+
+<Warning>
+  Revenue data fetching can be configured to prevent caching. This ensures you always see the most up-to-date financial information.
+</Warning>
+
+## Interpreting revenue trends
+
+Use the revenue chart to identify important business patterns:
+
+<Steps>
+  <Step title="Identify growth trends">
+    Look for upward trends across multiple months to confirm business growth
+  </Step>
+  <Step title="Spot seasonal patterns">
+    Notice which months typically have higher or lower revenue
+  </Step>
+  <Step title="Compare year-over-year">
+    If you have more than 12 months of data, compare the same months across years
+  </Step>
+  <Step title="Investigate dips">
+    When revenue drops, check if fewer invoices were paid or if invoice amounts decreased
+  </Step>
+</Steps>
+
+<Tip>
+  Compare the "Collected" card total with your revenue chart. The collected amount should equal the sum of all monthly revenue bars.
+</Tip>
+
+## Revenue visualization libraries
+
+For more advanced revenue visualization needs, nexDash can integrate with popular charting libraries:
+
+<CardGroup cols={3}>
+  <Card title="Tremor" icon="chart-mixed" href="https://www.tremor.so/">
+    React components for dashboards and data visualization
+  </Card>
+  <Card title="Chart.js" icon="chart-line" href="https://www.chartjs.org/">
+    Simple yet flexible JavaScript charting library
+  </Card>
+  <Card title="visx" icon="chart-area" href="https://airbnb.io/visx/">
+    Collection of expressive, low-level visualization primitives
+  </Card>
+</CardGroup>
+
+## Related features
+
+<CardGroup cols={2}>
+  <Card title="Invoice tracking" icon="file-invoice-dollar" href="/features/invoices">
+    Manage invoices that contribute to revenue
+  </Card>
+  <Card title="Customer management" icon="users" href="/features/customers">
+    View customers and their payment totals
+  </Card>
+</CardGroup>

@@ -1,0 +1,217 @@
+---
+title: Authentication
+description: Secure login system protecting access to your nexDash dashboard and customer data
+---
+
+The authentication system ensures that only authorized users can access your nexDash account. Log in securely with your email and password to view customer data, manage invoices, and track revenue.
+
+## Login process
+
+Access your nexDash dashboard through a secure login form that validates your credentials before granting access.
+
+### Login requirements
+
+<Steps>
+  <Step title="Enter email address">
+    Provide the email address associated with your nexDash account. The email field validates that you enter a properly formatted email address.
+  </Step>
+  <Step title="Enter password">
+    Input your account password. Passwords must be at least 6 characters long for security.
+  </Step>
+  <Step title="Submit credentials">
+    Click the "Log in" button to authenticate. The system verifies your credentials against the user database.
+  </Step>
+</Steps>
+
+<Warning>
+  Make sure you enter your credentials correctly. Multiple failed login attempts may trigger security measures.
+</Warning>
+
+## User data structure
+
+User accounts in nexDash follow this structure:
+
+```typescript
+type User = {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+}
+```
+
+<Note>
+  Passwords are securely hashed in the database. Plain text passwords are never stored.
+</Note>
+
+## Login form design
+
+The login interface provides a clean, accessible experience across all devices.
+
+### Form elements
+
+<Tabs>
+  <Tab title="Email field">
+    - **Label**: "Email"
+    - **Type**: Email input with validation
+    - **Icon**: @ symbol icon on the left
+    - **Placeholder**: "Enter your email address"
+    - **Required**: Yes
+    - **Validation**: Must be valid email format
+  </Tab>
+  <Tab title="Password field">
+    - **Label**: "Password"  
+    - **Type**: Password input (masked characters)
+    - **Icon**: Key icon on the left
+    - **Placeholder**: "Enter password"
+    - **Required**: Yes
+    - **Min length**: 6 characters
+  </Tab>
+  <Tab title="Submit button">
+    - **Text**: "Log in"
+    - **Icon**: Right arrow icon
+    - **Style**: Full width on mobile, prominent blue background
+    - **Action**: Submits credentials for authentication
+  </Tab>
+</Tabs>
+
+## Authentication workflow
+
+Understand how nexDash verifies your identity:
+
+```typescript
+export async function getUser(email: string) {
+  const user = await sql`SELECT * FROM users WHERE email=${email}`;
+  return user.rows[0] as User;
+}
+```
+
+<Steps>
+  <Step title="Form submission">
+    When you click "Log in", your email and password are sent to the authentication system
+  </Step>
+  <Step title="User lookup">
+    The system queries the database to find a user account matching your email address
+  </Step>
+  <Step title="Password verification">
+    Your entered password is compared with the hashed password stored in the database
+  </Step>
+  <Step title="Access granted or denied">
+    If credentials match, you're logged in and redirected to the dashboard. If not, an error is displayed
+  </Step>
+</Steps>
+
+## Security features
+
+nexDash implements several security measures to protect your account:
+
+<AccordionGroup>
+  <Accordion title="Password requirements">
+    Passwords must be at least 6 characters long. While this is the minimum, we recommend using:
+    - A mix of uppercase and lowercase letters
+    - Numbers and special characters
+    - Unique passwords not used on other sites
+  </Accordion>
+  
+  <Accordion title="Password hashing">
+    User passwords are never stored in plain text. They are hashed using secure one-way encryption, making it impossible to retrieve the original password.
+  </Accordion>
+  
+  <Accordion title="Email validation">
+    The login form validates email format before submission, preventing common typos and ensuring proper email structure.
+  </Accordion>
+  
+  <Accordion title="Required fields">
+    Both email and password are required fields. The form cannot be submitted with missing credentials.
+  </Accordion>
+</AccordionGroup>
+
+## Login page layout
+
+The login page provides a focused, distraction-free authentication experience:
+
+- **Centered form** - Login form centered on the page for focus
+- **Clear heading** - "Please log in to continue" message
+- **Icon indicators** - Visual icons help identify each field
+- **Responsive design** - Works seamlessly on desktop and mobile devices
+- **Error display** - Space reserved for showing login errors when authentication fails
+
+<Tip>
+  The login form uses visual indicators (icons) to improve accessibility and make the purpose of each field immediately clear.
+</Tip>
+
+## Troubleshooting login issues
+
+<AccordionGroup>
+  <Accordion title="Forgot password">
+    If you've forgotten your password, contact your nexDash administrator to reset your account credentials. Password reset functionality may be available depending on your installation.
+  </Accordion>
+  
+  <Accordion title="Invalid email or password">
+    If you receive an error after submitting:
+    - Double-check your email address for typos
+    - Verify your password is correct (remember it's case-sensitive)
+    - Ensure you're using the correct account credentials
+    - Check if Caps Lock is enabled
+  </Accordion>
+  
+  <Accordion title="Account not found">
+    If the system can't find your account:
+    - Verify you're using the email address registered with nexDash
+    - Contact your administrator to confirm your account exists
+    - Check if your account may have been deactivated
+  </Accordion>
+  
+  <Accordion title="Form validation errors">
+    If the form won't submit:
+    - Ensure email is in valid format (user@domain.com)
+    - Check that password meets minimum length of 6 characters
+    - Verify both fields are filled in
+  </Accordion>
+</AccordionGroup>
+
+## Session management
+
+Once authenticated, your session remains active while using nexDash:
+
+- **Persistent session** - Stay logged in as you navigate between pages
+- **Automatic routing** - After login, you're redirected to the dashboard
+- **Protected routes** - Attempting to access pages without logging in redirects to login form
+
+<Warning>
+  For security, always log out when using shared computers or devices. Close your browser when finished to end your session.
+</Warning>
+
+## User account information
+
+After logging in, nexDash knows your identity and can:
+
+- Display your name in the interface
+- Track your actions and changes
+- Personalize your dashboard experience
+- Associate data modifications with your user account
+
+## Best practices
+
+Follow these recommendations for secure authentication:
+
+<CardGroup cols={2}>
+  <Card title="Use strong passwords" icon="lock">
+    Create unique, complex passwords with mixed characters to protect your account from unauthorized access.
+  </Card>
+  <Card title="Keep credentials private" icon="eye-slash">
+    Never share your login credentials with others. Each user should have their own account.
+  </Card>
+  <Card title="Log out when done" icon="right-from-bracket">
+    End your session when finished, especially on shared devices, to prevent unauthorized access.
+  </Card>
+  <Card title="Verify the login page" icon="shield-check">
+    Always ensure you're on the legitimate nexDash login page before entering credentials.
+  </Card>
+</CardGroup>
+
+## Related features
+
+<Card title="Dashboard overview" icon="gauge" href="/">
+  Learn about the features available after logging into nexDash
+</Card>
