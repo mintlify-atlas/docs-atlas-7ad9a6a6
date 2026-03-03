@@ -1,0 +1,86 @@
+{
+  "projectType": "saas",
+  "projectName": "nexDash",
+  "projectDescription": "A modern Next.js dashboard application for managing customers, invoices, and revenue tracking with authentication.",
+  "theme": "mint",
+  "primaryColor": "#0070f3",
+  "lightColor": null,
+  "darkColor": null,
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "installation"
+            ]
+          },
+          {
+            "group": "Core Features",
+            "pages": [
+              "features/customers",
+              "features/invoices",
+              "features/revenue",
+              "features/authentication"
+            ]
+          },
+          {
+            "group": "Development",
+            "pages": [
+              "development/database-setup",
+              "development/deployment",
+              "development/environment-variables"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Data Layer",
+            "pages": [
+              "api/data-functions",
+              "api/type-definitions",
+              "api/utilities"
+            ]
+          },
+          {
+            "group": "Components",
+            "pages": [
+              "api/dashboard-components",
+              "api/invoice-components",
+              "api/customer-components",
+              "api/ui-components"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Customer management with detailed profiles",
+    "Invoice tracking with pending/paid status",
+    "Revenue visualization and analytics",
+    "Secure authentication with bcrypt",
+    "PostgreSQL database integration",
+    "Responsive dashboard UI with Tailwind CSS",
+    "Server-side rendering with Next.js 14",
+    "Type-safe data models with TypeScript"
+  ],
+  "publicApiSurface": [
+    "fetchRevenue()",
+    "fetchLatestInvoices()",
+    "fetchCardData()",
+    "fetchFilteredInvoices(query, currentPage)",
+    "fetchInvoicesPages(query)",
+    "fetchInvoiceById(id)",
+    "fetchCustomers()",
+    "fetchFilteredCustomers(query)",
+    "getUser(email)"
+  ]
+}
